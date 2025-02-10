@@ -21,7 +21,8 @@ let animals: Animal[] = [
 
 app.get("/", (c) => {
   return c.json({
-    message: "Hello World!",
+    message: "Animalia API (Batch 7)",
+    description: "A simple API for animals",
   });
 });
 
