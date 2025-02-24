@@ -42,7 +42,7 @@ app.get("/animals", async (c) => {
 
 // GET /animals/:id
 app.get("/animals/:id", async (c) => {
-  const id = Number(c.req.param("id"));
+  const id = c.req.param("id");
 
   const animal = await prisma.animal.findUnique({
     where: { id },
@@ -79,7 +79,7 @@ app.delete("/animals", async (c) => {
 
 // DELETE /animals/:id
 app.delete("/animals/:id", async (c) => {
-  const id = Number(c.req.param("id"));
+  const id = c.req.param("id");
 
   const animal = await prisma.animal.delete({
     where: { id },
@@ -90,7 +90,7 @@ app.delete("/animals/:id", async (c) => {
 
 // PATCH /animals/:id
 app.patch("/animals/:id", async (c) => {
-  const id = Number(c.req.param("id"));
+  const id = c.req.param("id");
   const bodyJson = await c.req.json();
 
   const animal = await prisma.animal.update({

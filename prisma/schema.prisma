@@ -8,7 +8,8 @@ datasource db {
 }
 
 model Animal {
-  id Int @id @default(autoincrement())
+  id   String  @id @default(ulid())
+  slug String? @unique
 
   name  String  @db.VarChar(255)
   color String?
@@ -25,7 +26,7 @@ model Animal {
 }
 
 model Habitat {
-  id Int @id @default(autoincrement())
+  id String @id @default(ulid())
 
   name String
   size Int
@@ -37,12 +38,12 @@ model Habitat {
 }
 
 model Food {
-  id Int @id @default(autoincrement())
+  id String @id @default(ulid())
 
   name String
 
-  animalId Int
-  animal   Animal @relation(fields: [animalId], references: [id])
+  animalId String
+  animal   Animal @relation(fields: [animalId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
