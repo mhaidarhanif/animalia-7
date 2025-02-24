@@ -12,7 +12,6 @@ type Animal = {
   id: number;
   name: string;
   color?: string;
-  isEndangered?: boolean;
 };
 
 let dataAnimals: Animal[] = [
