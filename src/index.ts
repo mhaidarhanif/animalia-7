@@ -34,7 +34,12 @@ app.get("/", async (c) => {
 // GET /animals
 app.get("/animals", async (c) => {
   const animals = await prisma.animal.findMany({
+    relationLoadStrategy: "join",
     orderBy: { createdAt: "asc" },
+    include: {
+      habitats: true,
+      foods: true,
+    },
   });
 
   return c.json(animals);
