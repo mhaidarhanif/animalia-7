@@ -1,5 +1,11 @@
 import { Hono } from "hono";
 
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient({
+  log: ["query"],
+});
+
 const app = new Hono();
 
 type Animal = {
@@ -9,7 +15,7 @@ type Animal = {
   isEndangered?: boolean;
 };
 
-let animals: Animal[] = [
+let dataAnimals: Animal[] = [
   { id: 1, name: "Aardvark" },
   { id: 2, name: "Bear" },
   { id: 3, name: "Cat" },
@@ -19,7 +25,7 @@ let animals: Animal[] = [
   { id: 7, name: "Goose" },
 ];
 
-app.get("/", (c) => {
+app.get("/", async (c) => {
   return c.json({
     message: "Animalia API (Batch 7)",
     description: "A simple API for animals",
@@ -27,16 +33,20 @@ app.get("/", (c) => {
 });
 
 // GET /animals
-app.get("/animals", (c) => {
+app.get("/animals", async (c) => {
+  const animals = await prisma.animal.findMany({
+    orderBy: { createdAt: "asc" },
+  });
+
   return c.json(animals);
 });
 
 // GET /animals/:id
-app.get("/animals/:id", (c) => {
+app.get("/animals/:id", async (c) => {
   const id = Number(c.req.param("id"));
 
-  const animal = animals.find((animal) => {
-    return animal.id === id;
+  const animal = await prisma.animal.findUnique({
+    where: { id },
   });
 
   if (!animal) {
@@ -47,16 +57,54 @@ app.get("/animals/:id", (c) => {
 });
 
 // POST /animals
-app.post();
+app.post("/animals", async (c) => {
+  const bodyJson = await c.req.json();
+
+  const animal = await prisma.animal.create({
+    data: {
+      name: bodyJson.name,
+      age: bodyJson.age,
+      color: bodyJson.color,
+    },
+  });
+
+  return c.json(animal);
+});
 
 // DELETE /animals
-app.delete();
+app.delete("/animals", async (c) => {
+  const result = await prisma.animal.deleteMany();
+
+  return c.json(result);
+});
 
 // DELETE /animals/:id
-app.delete();
+app.delete("/animals/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+
+  const animal = await prisma.animal.delete({
+    where: { id },
+  });
+
+  return c.json(animal);
+});
 
 // PATCH /animals/:id
-app.patch();
+app.patch("/animals/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  const bodyJson = await c.req.json();
+
+  const animal = await prisma.animal.update({
+    where: { id },
+    data: {
+      name: bodyJson.name,
+      age: bodyJson.age,
+      color: bodyJson.color,
+    },
+  });
+
+  return c.json(animal);
+});
 
 // PUT /animals/:id
 app.put();

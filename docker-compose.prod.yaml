@@ -1,4 +1,12 @@
 services:
+  backend:
+    image: animalia-7-image
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
   database:
     image: postgres:alpine
     ports:
